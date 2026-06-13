@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Color Palette & Custom Properties */
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --primary-glow: rgba(99, 102, 241, 0.15);
+            --success: #10b981;
+            --input-bg: rgba(15, 23, 42, 0.6);
+            --input-border: rgba(255, 255, 255, 0.1);
+            --input-focus: #818cf8;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Reset & Base Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Abstract Decorative Elements */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, rgba(99, 102, 241, 0) 70%);
+            top: 10%;
+            left: 10%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.2) 0%, rgba(236, 72, 153, 0) 70%);
+            bottom: 10%;
+            right: 10%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Container & Glassmorphism Card */
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 480px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transition: var(--transition);
+        }
+
+        .container:hover {
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.025em;
+            background: linear-gradient(to right, #ffffff, #c7d2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 400;
+        }
+
+        /* Form Layout */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+
+        .form-group:focus-within label {
+            color: var(--input-focus);
+        }
+
+        /* Inputs & Textarea */
+        input, textarea {
+            font-family: inherit;
+            font-size: 0.95rem;
+            padding: 0.85rem 1.1rem;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            outline: none;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        input:hover, textarea:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--input-focus);
+            box-shadow: 0 0 0 4px var(--primary-glow);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Send Button */
+        button {
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ffffff;
+            background: var(--primary);
+            border: none;
+            border-radius: 12px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* Loading / Submitting State on Button */
+        button.submitting {
+            background: var(--primary-hover);
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2.5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ffffff;
+            animation: spin 0.8s linear infinite;
+        }
+
+        button.submitting .spinner {
+            display: block;
+        }
+
+        button.submitting .btn-text {
+            visibility: hidden;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Message Box */
+        #msg {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 0.85rem;
+            border-radius: 12px;
+            transition: var(--transition);
+            opacity: 0;
+            transform: translateY(10px);
+            display: none;
+        }
+
+        #msg.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .container {
+                padding: 1.75rem;
+                border-radius: 18px;
+            }
+            h1 {
+                font-size: 1.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Contact us</h1>
+        <p class="subtitle">We'd love to hear from you. Please fill out the form below.</p>
+        
+        <form id="contact-form">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" required placeholder="John Doe">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required placeholder="john@example.com">
+            </div>
+
+            <div class="form-group">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" required placeholder="Write your message here..."></textarea>
+            </div>
+
+            <button type="submit" id="submit-btn">
+                <span class="btn-text">Send Message</span>
+                <div class="spinner"></div>
+            </button>
+        </form>
+
+        <p id="msg"></p>
+    </div>
+
+    <script>
+        const form = document.getElementById('contact-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const msg = document.getElementById('msg');
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbyHCHPBjZIYKZ2OAhychMuyXcgVIHCaQG_4SeNxN13-3041VXCP5uK8pEv8guHXWqJ6/exec';
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Set loading state
+            submitBtn.classList.add('submitting');
+            submitBtn.disabled = true;
+            msg.className = ''; // Reset message class
+            msg.textContent = '';
+
+            // Get form values
+            const data = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                message: document.getElementById('message').value
+            };
+
+            try {
+                // Post to Apps Script
+                await fetch(scriptUrl, {
+                    method: "POST",
+                    mode: "no-cors",
+                    body: JSON.stringify(data)
+                });
+
+                // Display success message and reset form
+                msg.textContent = "Thanks! We'll get back to you.";
+                msg.classList.add('show');
+                form.reset();
+            } catch (error) {
+                console.error("Error submitting form:", error);
+                // Even under no-cors, standard network errors could occur.
+                // But generally, with no-cors, fetch resolves on success/response sent.
+                msg.textContent = "Something went wrong. Please try again.";
+                msg.style.color = '#ef4444';
+                msg.style.background = 'rgba(239, 68, 68, 0.1)';
+                msg.style.borderColor = 'rgba(239, 68, 68, 0.2)';
+                msg.classList.add('show');
+            } finally {
+                // Remove loading state
+                submitBtn.classList.remove('submitting');
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

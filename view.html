@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Submissions</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --error-color: #ef4444;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.5;
+            margin: 0;
+            padding: 24px 16px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        #list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .contact-item {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .contact-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .contact-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .contact-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .contact-email {
+            color: var(--text-muted);
+            margin-left: 0.25rem;
+        }
+
+        .contact-date {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .contact-message {
+            margin: 0;
+            color: var(--text-main);
+            background: #f1f5f9;
+            padding: 0.875rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            white-space: pre-wrap;
+        }
+
+        .status-message {
+            text-align: center;
+            padding: 2.5rem 1rem;
+            color: var(--text-muted);
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px dashed var(--border-color);
+        }
+
+        .error-message {
+            color: var(--error-color);
+        }
+
+        .loading {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>All submissions</h1>
+        <ul id="list">
+            <li class="status-message loading">Loading submissions...</li>
+        </ul>
+    </div>
+
+    <script>
+        const URL = 'https://script.google.com/macros/s/AKfycbyHCHPBjZIYKZ2OAhychMuyXcgVIHCaQG_4SeNxN13-3041VXCP5uK8pEv8guHXWqJ6/exec';
+        const listEl = document.getElementById('list');
+
+        async function loadSubmissions() {
+            try {
+                const res = await fetch(URL);
+                const data = await res.json();
+
+                listEl.innerHTML = ''; // Clear loading message
+
+                if (!data.contacts || data.contacts.length === 0) {
+                    listEl.innerHTML = '<li class="status-message">No submissions yet</li>';
+                    return;
+                }
+
+                data.contacts.forEach(contact => {
+                    const li = document.createElement('li');
+                    li.className = 'contact-item';
+
+                    // Format date nicely if possible
+                    let dateStr = contact.created_at || '';
+                    if (dateStr) {
+                        try {
+                            const dateObj = new Date(dateStr);
+                            if (!isNaN(dateObj)) {
+                                dateStr = dateObj.toLocaleString(undefined, { 
+                                    dateStyle: 'medium', 
+                                    timeStyle: 'short' 
+                                });
+                            }
+                        } catch (e) {}
+                    }
+
+                    li.innerHTML = `
+                        <div class="contact-header">
+                            <div>
+                                <span class="contact-name">${escapeHtml(contact.name || 'Anonymous')}</span>
+                                <span class="contact-email">(${escapeHtml(contact.email || 'No email')})</span>
+                            </div>
+                            <span class="contact-date">${escapeHtml(dateStr)}</span>
+                        </div>
+                        <p class="contact-message">${escapeHtml(contact.message || '')}</p>
+                    `;
+                    listEl.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Error fetching submissions:', error);
+                listEl.innerHTML = '<li class="status-message error-message">Couldn\\'t load — try again later</li>';
+            }
+        }
+
+        // Basic HTML escaping to prevent XSS from user input
+        function escapeHtml(unsafe) {
+            if (!unsafe) return '';
+            return String(unsafe)
+                 .replace(/&/g, "&amp;")
+                 .replace(/</g, "&lt;")
+                 .replace(/>/g, "&gt;")
+                 .replace(/"/g, "&quot;")
+                 .replace(/'/g, "&#039;");
+        }
+
+        // Fetch on page load
+        loadSubmissions();
+    </script>
+</body>
+</html>

@@ -12,6 +12,7 @@
             --text-muted: #64748b;
             --border-color: #e2e8f0;
             --error-color: #ef4444;
+            --primary: #3b82f6;
         }
 
         body {
@@ -28,12 +29,33 @@
             margin: 0 auto;
         }
 
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
         h1 {
             font-size: 1.875rem;
             font-weight: 700;
-            margin-top: 0;
-            margin-bottom: 1.5rem;
-            text-align: center;
+            margin: 0;
+        }
+
+        .logout-btn {
+            background-color: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            background-color: #f1f5f9;
+            color: var(--text-main);
         }
 
         #list {
@@ -50,13 +72,13 @@
             border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 1.25rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
         .contact-item:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
 
         .contact-header {
@@ -118,7 +140,10 @@
 </head>
 <body>
     <div class="container">
-        <h1>All submissions</h1>
+        <div class="header-bar">
+            <h1>All submissions</h1>
+            <button id="logoutBtn" class="logout-btn">Log out</button>
+        </div>
         <ul id="list">
             <li class="status-message loading">Loading submissions...</li>
         </ul>
@@ -126,12 +151,34 @@
 
     <script>
         const URL = 'https://script.google.com/macros/s/AKfycbyHCHPBjZIYKZ2OAhychMuyXcgVIHCaQG_4SeNxN13-3041VXCP5uK8pEv8guHXWqJ6/exec';
+        
+        // Check for token on load
+        const token = localStorage.getItem("token");
+        if (!token) {
+            window.location.href = "login.html";
+        }
+
         const listEl = document.getElementById('list');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem("token");
+            window.location.href = "login.html";
+        });
 
         async function loadSubmissions() {
+            if (!token) return; // Prevent fetch if redirecting
+
             try {
-                const res = await fetch(URL);
+                const params = new URLSearchParams({ action: "getContacts", token });
+                const res = await fetch(URL + "?" + params.toString());
                 const data = await res.json();
+
+                if (!data.ok) {
+                    localStorage.removeItem("token");
+                    window.location.href = "login.html";
+                    return;
+                }
 
                 listEl.innerHTML = ''; // Clear loading message
 
@@ -150,18 +197,21 @@
                         try {
                             const dateObj = new Date(dateStr);
                             if (!isNaN(dateObj)) {
-                                dateStr = dateObj.toLocaleString(undefined, { 
-                                    dateStyle: 'medium', 
-                                    timeStyle: 'short' 
+                                dateStr = dateObj.toLocaleString(undefined, {
+                                    dateStyle: 'medium',
+                                    timeStyle: 'short'
                                 });
                             }
-                        } catch (e) {}
+                        } catch (e) { }
                     }
+
+                    // Handled column keys issue
+                    const name = contact.name || contact[' name'] || contact['nama'] || 'Anonymous';
 
                     li.innerHTML = `
                         <div class="contact-header">
                             <div>
-                                <span class="contact-name">${escapeHtml(contact.name || contact[' name'] || contact['nama'] || 'Anonymous')}</span>
+                                <span class="contact-name">${escapeHtml(name)}</span>
                                 <span class="contact-email">(${escapeHtml(contact.email || 'No email')})</span>
                             </div>
                             <span class="contact-date">${escapeHtml(dateStr)}</span>
@@ -180,15 +230,17 @@
         function escapeHtml(unsafe) {
             if (!unsafe) return '';
             return String(unsafe)
-                 .replace(/&/g, "&amp;")
-                 .replace(/</g, "&lt;")
-                 .replace(/>/g, "&gt;")
-                 .replace(/"/g, "&quot;")
-                 .replace(/'/g, "&#039;");
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
         }
 
         // Fetch on page load
-        loadSubmissions();
+        if (token) {
+            loadSubmissions();
+        }
     </script>
 </body>
 </html>

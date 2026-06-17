@@ -161,7 +161,7 @@
                     li.innerHTML = `
                         <div class="contact-header">
                             <div>
-                                <span class="contact-name">${escapeHtml(contact.name || 'Anonymous')}</span>
+                                <span class="contact-name">${escapeHtml(contact.name || contact[' name'] || contact['nama'] || 'Anonymous')}</span>
                                 <span class="contact-email">(${escapeHtml(contact.email || 'No email')})</span>
                             </div>
                             <span class="contact-date">${escapeHtml(dateStr)}</span>
